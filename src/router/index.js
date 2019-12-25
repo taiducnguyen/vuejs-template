@@ -1,16 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomePage from '../modules/home/home.vue'
+import LoginPage from '../modules/login/login.vue';
+import { UserRole } from '../core/config';
 
 Vue.use(Router)
 
-export default new Router({
+export const router = new Router({
   mode: 'history',
   routes: [
     {
+      path: '/login',
+      name: 'Login',
+      component: LoginPage
+    },
+    {
       path: '/',
       name: 'HomePage',
-      component: HomePage
+      component: HomePage,
+      meta: {
+        authRequired: true,
+        allowRoles: [UserRole.Admin, UserRole.PM]
+      },
     },
     {
       path: '/404',
@@ -24,28 +35,15 @@ export default new Router({
   ]
 })
 
-// function lazyLoadView (AsyncView) {
-//   const AsyncHandler = () => ({
-//     component: AsyncView,
-//     // A component to use while the component is loading.
-//     loading: require('@views/_loading.vue').default,
-//     // Delay before showing the loading component.
-//     // Default: 200 (milliseconds).
-//     delay: 400,
-//     // A fallback component in case the timeout is exceeded
-//     // when loading the component.
-//     error: require('@views/_timeout.vue').default,
-//     // Time before giving up trying to load the component.
-//     // Default: Infinity (milliseconds).
-//     timeout: 1000,
-//   })
+router.beforeEach((to, from, next) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const authRequired = to.meta.authRequired == true;
+  const allowRoles = to.meta.allowRoles;
+  const loggedIn = localStorage.getItem('token');
 
-//   return Promise.resolve({
-//     functional: true,
-//     render (h, { data, children }) {
-//       // Transparently pass any props or children
-//       // to the view component.
-//       return h(AsyncHandler, data, children)
-//     }
-//   })
-// }
+  if (authRequired && !loggedIn) {
+    return next('/login');
+  }
+
+  next();
+})
