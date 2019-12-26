@@ -1,25 +1,25 @@
-import axios from 'axios'
-import Service from "./service"
+import axios from 'axios';
 import { ApiUrl } from "./api-url";
 import { JwtHelper } from './jwt-helper';
-
+import { TokenKey } from './config';
+import Service from "./service";
 let service = new Service('auth', this);
 
 export const state = {
-    currentUser: getSavedState('auth.currentUser'),
+    authToken: getSavedState(TokenKey.AuthToken),
 }
 
 export const mutations = {
-    SET_CURRENT_USER(state, newValue) {
-        state.currentUser = newValue;
-        saveState('auth.currentUser', newValue);
+    SET_ACCESS_TOKEN(state, newAuthToken) {
+        state.authToken = newAuthToken;
+        saveState(TokenKey.AuthToken, newAuthToken);
     },
 }
 
 export const getters = {
     // Whether the user is currently logged in.
     loggedIn(state) {
-        return !!state.currentUser;
+        return !!state.authToken;
     },
 }
 
@@ -37,10 +37,13 @@ export const actions = {
             // return dispatch('validate');
         }
 
-        return service.post(ApiUrl.Login, { username, password }).then(res => {
-            const user = res.data;
-            commit('SET_CURRENT_USER', user);
-            return user;
+        return service.post(ApiUrl.Login, { userNameOrEmailAddress: username, password }).then(res => {
+            const accessToken = res.result && res.result.accessToken;
+            console.log(accessToken)
+            if (!!accessToken) {
+                commit('SET_ACCESS_TOKEN', accessToken);
+            }
+            return res.result;
         }).catch(err => {
             throw err;
         });
@@ -48,23 +51,23 @@ export const actions = {
 
     // Logs out the current user.
     logOut({ commit }) {
-        commit('SET_CURRENT_USER', null)
+        commit('SET_ACCESS_TOKEN', null)
     },
 
     // Validates the current user's token and refreshes it
     // with new data from the API.
     validate({ commit, state }) {
-        if (!state.currentUser) return Promise.resolve(null)
+        if (!state.authToken) return Promise.resolve(null)
         return axios
             .get('/api/session')
             .then((response) => {
                 const user = response.data
-                commit('SET_CURRENT_USER', user)
+                commit('SET_ACCESS_TOKEN', user)
                 return user
             })
             .catch((error) => {
                 if (error.response && error.response.status === 401) {
-                    commit('SET_CURRENT_USER', null)
+                    commit('SET_ACCESS_TOKEN', null)
                 } else {
                     console.warn(error)
                 }
@@ -72,8 +75,6 @@ export const actions = {
             })
     },
     loginFake({ commit, state }, { username, password } = {}) {
-        console.log(username)
-        console.log(password)
 
         return new Promise((resolve, reject) => {
             if (!!username && !!password) {
@@ -82,7 +83,7 @@ export const actions = {
                     token: 'Fake'
                 };
                 let token = JwtHelper.createSignToken(data);
-                commit('SET_CURRENT_USER', token);
+                commit('SET_ACCESS_TOKEN', token);
                 resolve(data);
             } else {
                 reject('Fake Data')
@@ -96,17 +97,11 @@ export const actions = {
 // ===
 
 function getSavedState(key) {
-    return JSON.parse(window.localStorage.getItem(key))
+    return window.localStorage.getItem(key)
 }
 
 function saveState(key, state) {
-    window.localStorage.setItem(key, JSON.stringify(state))
-}
-
-function setDefaultAuthHeaders(state) {
-    axios.defaults.headers.common.Authorization = state.currentUser ?
-        state.currentUser.token :
-        ''
+    window.localStorage.setItem(key, state)
 }
 
 export default {

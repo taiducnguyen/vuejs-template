@@ -1,5 +1,6 @@
 <script>
 import Layout from '../_layout/default.layout'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -9,6 +10,16 @@ export default {
     return {
       title: 'Home page title'
     }
+  },
+  computed: {
+  },
+  created(){
+    this.getRoles();
+  },
+  methods:{
+    ...mapActions('home',[
+      'getRoles'
+    ])
   }
 }
 </script>

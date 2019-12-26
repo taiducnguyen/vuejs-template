@@ -5,3 +5,7 @@ export const UserRole = {
 }
 
 export const IsProduction = process.env.NODE_ENV === 'production';
+
+export const TokenKey = {
+    AuthToken: 'auth.token',
+}

@@ -1,6 +1,8 @@
 <script>
 import { authMethods } from "../../core/helpers";
-
+import { mapGetters } from "vuex";
+import { JwtHelper } from "../../core/jwt-helper";
+import { TokenKey } from "../../core/config";
 export default {
   data() {
     return {
@@ -10,6 +12,11 @@ export default {
       authErrorMsg: "",
       isLoggingIn: false
     };
+  },
+  beforeCreate() {
+    if (!JwtHelper.isExpired(TokenKey.AuthToken)) {
+      console.log("P");
+    }
   },
   computed: {
     placeHolders() {
@@ -26,13 +33,14 @@ export default {
       e && e.preventDefault();
       this.submitted = true;
       this.isLoggingIn = true;
-      return this.loginFake({
+
+      return this.logIn({
         username: this.userName,
         password: this.passWord
       })
-        .then(token => {
+        .then(res => {
           this.isLoggingIn = false;
-          this.$router.push(this.$route.query.redirectFrom || { name: 'home' });
+          this.$router.push(this.$route.query.redirect || "/");
         })
         .catch(err => {
           this.isLoggingIn = false;

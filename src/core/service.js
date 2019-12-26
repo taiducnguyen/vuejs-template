@@ -1,18 +1,21 @@
 import axios from 'axios';
 import { JwtHelper } from "../core/jwt-helper";
+import { IsProduction, TokenKey } from './config';
+
+const apiBaseUrl = IsProduction ? 'http://localhost:8088/login' : 'http://et.niteco.se:8080/';
+
 const isHandlerEnabled = true;
 
 const requestHandler = (request) => {
     if (isHandlerEnabled) {
-        //TODO: Change Request Header
-        const token = localStorage.getItem('token');
-        // if (JwtHelper.isAuthenticated()) {
-        //     request.headers['Authorization'] = 'Bearer ' + token;
+        const token = localStorage.getItem(TokenKey.AuthToken);
+        if (JwtHelper.isAuthenticated()) {
+            request.headers.common['Authorization'] = 'Bearer ' + token;
+        }
+        // if (!request.headers.common.has('Content-Type') && !(request.body instanceof FormData)) {
+        //     request.headers.common['Content-Type'] = 'application/json';
         // }
-        // if (!request.headers.has('Content-Type') && !(request.body instanceof FormData)) {
-        //     request.headers['Content-Type'] = 'application/json';
-        // }
-        // request.headers['Accept'] = 'application/json';
+        request.headers.common['Accept'] = 'application/json';
     }
     return request;
 }
@@ -35,6 +38,7 @@ export default class Service {
     constructor(namespace, vm, socketOpts) {
         this.namespace = namespace;
         this.axios = axios.create({
+            baseURL: apiBaseUrl,
             responseType: "json"
         });
 

@@ -1,6 +1,10 @@
+import Service from "../../core/service";
+import { ApiUrl } from "../../core/api-url";
+let service = new Service('home', this);
 /** State Definition */
 const state = {
-    profile: {}
+    profile: {},
+    roles: []
 };
 
 /** Getters - Return State */
@@ -8,13 +12,19 @@ const getters = {
     profile(state) {
         return state.profile;
     },
+    roles(state) {
+        return state.roles;
+    }
 }
 
 /** Mutations - Synchronous */
 const mutations = {
-    ["UPDATE"](state, profile) {
+    ["UPDATE_USER_PROFILE"](state, profile) {
         state.profile = profile;
-    }
+    },
+    ["UPDATE_ROLES"](state, roles) {
+        state.roles = roles;
+    },
 };
 
 
@@ -27,6 +37,18 @@ const actions = {
         //     toastr.error(err.message);
         // });
     },
+    getRoles({ commit }, { payload } = {}) {
+        return service.get(ApiUrl.RoleGetAllPermissions).then(res => {
+            if (res.result && res.result.items) {
+                commit('UPDATE_ROLES', res.result.items)
+            } else {
+                commit('UPDATE_ROLES', [])
+            }
+            return res;
+        }, err => {
+            throw err;
+        })
+    }
 };
 
 
