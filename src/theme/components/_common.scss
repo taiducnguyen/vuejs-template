@@ -2,3 +2,39 @@ html,
 body {
     font-size: 16px;
 }
+
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.error-msg {
+    color: $text-color-red;
+    font-size: .875rem;
+}
+
+.txt-white {
+    color: $text-color-white;
+}
+
+a {
+    text-decoration: none;
+    &:hover {
+        transition: opacity .3s ease-in-out;
+    }
+    &.txt-white {
+        &:hover {
+            color: $text-color-white;
+            opacity: .8;
+            text-decoration: none;
+        }
+    }
+}
