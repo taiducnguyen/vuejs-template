@@ -39,7 +39,6 @@ export const actions = {
 
         return service.post(ApiUrl.Login, { userNameOrEmailAddress: username, password }).then(res => {
             const accessToken = res.result && res.result.accessToken;
-            console.log(accessToken)
             if (!!accessToken) {
                 commit('SET_ACCESS_TOKEN', accessToken);
             }
@@ -82,7 +81,7 @@ export const actions = {
                     username: username,
                     token: 'Fake'
                 };
-                let token = JwtHelper.createSignToken(data);
+                let token = JwtHelper.createSigningToken(data);
                 commit('SET_ACCESS_TOKEN', token);
                 resolve(data);
             } else {

@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HomePage from '../modules/home/home.vue'
 import LoginPage from '../modules/login/login.vue';
-import { UserRole, TokenKey } from '../core/config';
-import store from '../core/store';
+import { UserRole } from '../core/config';
+import { JwtHelper } from '../core/jwt-helper';
 
 Vue.use(Router);
 
@@ -13,7 +13,10 @@ export const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: LoginPage
+      component: LoginPage,
+      meta: {
+        title: 'Login Page'
+      }
     },
     {
       path: '/',
@@ -21,7 +24,8 @@ export const router = new Router({
       component: HomePage,
       beforeEnter: AuthGuard,
       meta: {
-        allowRoles: [UserRole.Admin, UserRole.PM]
+        allowRoles: [UserRole.Admin, UserRole.PM],
+        title: 'Home Page'
       },
     },
     {
@@ -36,22 +40,14 @@ export const router = new Router({
   ]
 })
 
-// router.beforeEach((to, from, next) => {
-//   // redirect to login page if not logged in and trying to access a restricted page
-//   const authRequired = to.meta.authRequired == true;
-//   const allowRoles = to.meta.allowRoles;
-//   const loggedIn = localStorage.getItem(TokenKey.AuthToken);
-
-//   if (authRequired && !loggedIn) {
-//     return next('/login');
-//   }
-
-//   next();
-// })
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || 'Efficient Time';
+  next();
+})
 
 let entryUrl = "";
 function AuthGuard(to, from, next) {
-  if (store.state.auth.authToken) {
+  if (JwtHelper.isAuthenticated()) {
     if (entryUrl) {
       const url = entryUrl;
       entryUrl = null;
@@ -64,7 +60,7 @@ function AuthGuard(to, from, next) {
   // we use await as this async request has to finish 
   // before we can be sure
 
-  if (store.state.auth.authToken) {
+  if (JwtHelper.isAuthenticated()) {
     next();
   } else {
     entryUrl = to.path; // store entry url before redirect

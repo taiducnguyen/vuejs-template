@@ -2,7 +2,7 @@ import axios from 'axios';
 import { JwtHelper } from "../core/jwt-helper";
 import { IsProduction, TokenKey } from './config';
 
-const apiBaseUrl = IsProduction ? 'http://localhost:8088/login' : 'http://et.niteco.se:8080/';
+const apiBaseUrl = IsProduction ? 'http://et.niteco.se:8080/' : 'http://et.niteco.se:8080/';
 
 const isHandlerEnabled = true;
 
@@ -31,6 +31,7 @@ const errorHandler = (error) => {
     if (isHandlerEnabled) {
         //TODO: Do Error Handler
     }
+    console.log( error)
     return Promise.reject({...error.toJSON()});
 }
 

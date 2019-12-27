@@ -1,31 +1,28 @@
 <script>
-import Layout from '../_layout/default.layout'
-import { mapActions } from 'vuex'
+import Layout from '../_layouts/default.layout';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
     Layout
   },
-  data () {
+  data() {
     return {
       title: 'Home page title'
-    }
+    };
   },
-  computed: {
-  },
-  created(){
+  computed: {},
+  created() {
     this.getRoles();
   },
-  methods:{
-    ...mapActions('home',[
-      'getRoles'
-    ])
+  methods: {
+    ...mapActions('home', ['getRoles'])
   }
-}
+};
 </script>
 
 <template>
- <Layout>
-    <h4>Home page {{title}}</h4>
- </Layout>
+  <Layout>
+    <h4>Home page {{ title }}</h4>
+  </Layout>
 </template>
