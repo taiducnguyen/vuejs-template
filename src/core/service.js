@@ -31,8 +31,8 @@ const errorHandler = (error) => {
     if (isHandlerEnabled) {
         //TODO: Do Error Handler
     }
-    console.log( error)
-    return Promise.reject({...error.toJSON()});
+    console.log(error)
+    return Promise.reject({ ...error.toJSON() });
 }
 
 export default class Service {
@@ -55,7 +55,7 @@ export default class Service {
     }
 
     /**
-     * 
+     * Get Http Request
      * @param {any} action 
      */
     get(action) {
@@ -105,7 +105,7 @@ export default class Service {
     }
 
     /**
-     * 
+     * Put Http Request
      * @param {any} action 
      * @param {any} parrams 
      */

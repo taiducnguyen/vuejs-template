@@ -23,6 +23,7 @@ export default {
 
 <template>
   <Layout>
+    <div class="login-page"></div>
     <h4>Home page {{ title }}</h4>
   </Layout>
 </template>

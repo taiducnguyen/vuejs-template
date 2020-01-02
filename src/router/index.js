@@ -22,7 +22,7 @@ export const router = new Router({
       path: '/',
       name: 'HomePage',
       component: HomePage,
-      beforeEnter: AuthGuard,
+      // beforeEnter: AuthGuard,
       meta: {
         allowRoles: [UserRole.Admin, UserRole.PM],
         title: 'Home Page'

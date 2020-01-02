@@ -14,6 +14,9 @@ export const mutations = {
         state.authToken = newAuthToken;
         saveState(TokenKey.AuthToken, newAuthToken);
     },
+    REMOVE_ALL_TOKEN(state) {
+        localStorage.clear();
+    },
 }
 
 export const getters = {
@@ -50,7 +53,11 @@ export const actions = {
 
     // Logs out the current user.
     logOut({ commit }) {
-        commit('SET_ACCESS_TOKEN', null)
+        return new Promise((resolve, reject) => {
+            commit('SET_ACCESS_TOKEN', null);
+            commit('REMOVE_ALL_TOKEN');
+            resolve('Logout Success!');
+        })
     },
 
     // Validates the current user's token and refreshes it

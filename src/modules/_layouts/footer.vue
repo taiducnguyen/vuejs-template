@@ -9,11 +9,26 @@ export default {
 };
 </script>
 <template>
-  <div class="text-center">
-    <a href="https://niteco.efficienttime.com/" target="_blank" title="Niteco Efficient Time" class="text-muted">
-      <span>{{copyTitle}}</span>
-      <b>Version {{version}}</b>
+  <footer class="text-center">
+    <a
+      href="https://niteco.efficienttime.com/"
+      target="_blank"
+      title="Niteco Efficient Time"
+      class="text-muted"
+    >
+      <span>{{ copyTitle }}</span>
+      <b>Version {{ version }}</b>
       &nbsp;
     </a>
-  </div>
+  </footer>
 </template>
+<style lang="scss" scoped>
+footer {
+  position: fixed;
+  z-index: 990;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15px;
+}
+</style>
